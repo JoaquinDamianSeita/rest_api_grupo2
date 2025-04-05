@@ -1,41 +1,41 @@
-/*-- Users
+-- Roles
+INSERT INTO roles (id, name) VALUES
+                                 (1, 'BUYER'),
+                                 (2, 'ARTIST');
+-- Users
 INSERT INTO users (
-    id, username, email, password, role,
+    id, username, email, password, role_id,
     first_name, last_name, address, registration_date, biography
 ) VALUES
-      (1, 'alice', 'alice@example.com', 'pass123', 'BUYER',
+      (1, 'alice', 'alice@example.com', 'pass123', 1,
        'Alice', 'Smith', '123 Main St, Cityville', NOW(), 'Digital art enthusiast and collector of rare tokens'),
 
-      (2, 'bob', 'bob@example.com', 'pass456', 'ARTIST',
+      (2, 'bob', 'bob@example.com', 'pass456', 2,
        'Bob', 'Johnson', '456 Art Lane, Paintown', NOW(), 'Painter and 3D artist working with NFTs');
 
-
 -- NFT Tokens
-INSERT INTO nft_tokens (id, user_id, title, description, price, release_date, art_type, physical_pieces, sold) VALUES
-                                                                                                                   (1, 1, 'Mona Lisa NFT', 'Digital version of Mona Lisa', 1500.00, NOW(), 'PAINTING', 5, false),
-                                                                                                                   (2, 2, 'Space Odyssey', 'NFT from space art collection', 800.00, NOW(), 'DIGITAL', 0, true);
+-- Insert for NFTToken
+INSERT INTO nft_tokens (
+    id, title, description, price, release_date, art_type, physical_pieces, available, user_id
+) VALUES
+    (1, 'Digital Art Piece', 'A unique digital art piece', 500.00, '2023-10-01 12:00:00', 'DIGITAL', 1, true, 2);
 
--- Image URLs
-INSERT INTO image_urls (id, nft_token_id, url) VALUES
-                                                   (1, 1, 'https://example.com/mona1.jpg'),
-                                                   (2, 1, 'https://example.com/mona2.jpg'),
-                                                   (3, 2, 'https://example.com/space1.jpg');
+-- Insert for ImageUrl
+INSERT INTO image_urls (
+    id, url, nft_token_id
+) VALUES
+      (1, 'http://example.com/image1.png', 1),
+      (2, 'http://example.com/image2.png', 1);
 
--- Carts
-INSERT INTO carts (id, user_id, created_at) VALUES
-                                    (1, 1, NOW()),
-                                    (2, 2, NOW());
-
--- Cart Tokens
-INSERT INTO cart_tokens (cart_id, token_id) VALUES
-                                                (1, 1),
-                                                (2, 2);
-
--- Sales
-INSERT INTO sales (id, user_id, sale_date) VALUES
-    (1, 1, NOW());
+-- Insert for Sale
+INSERT INTO sales (
+    id, user_id, sale_date
+) VALUES
+      (1, 1, '2023-10-01 12:00:00');
 
 -- Sale Tokens
-INSERT INTO sale_tokens (sale_id, token_id, sale_price) VALUES
-    (1, 2, 750.00);
-*/
+-- Insert for SaleToken
+INSERT INTO sale_tokens (
+    sale_id, token_id, sale_price
+) VALUES
+      (1, 1, 450.00);
