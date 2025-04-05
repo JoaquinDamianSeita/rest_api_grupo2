@@ -3,6 +3,7 @@ package org.api.rest_api_grupo2.controller;
 import jakarta.validation.Valid;
 import org.api.rest_api_grupo2.dto.request.LoginRequest;
 import org.api.rest_api_grupo2.dto.request.RegisterRequest;
+import org.api.rest_api_grupo2.dto.request.UpdateRequest;
 import org.api.rest_api_grupo2.service.IUserService;
 import org.api.rest_api_grupo2.service.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,5 +30,10 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
         return ResponseEntity.ok(userService.login(request));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody UpdateRequest request) {
+        return new ResponseEntity<>(userService.updateUser(id, request), HttpStatus.OK);
     }
 }
