@@ -35,7 +35,7 @@ public class UserServiceImpl implements IUserService {
 
         User user = objectMapper.convertValue(request, User.class);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setRegistration_date(LocalDateTime.now());
+        user.setRegistrationDate(LocalDateTime.now());
 
         userRepository.save(user);
         return new MessageResponseDto("Usuario registrado con éxito.");
