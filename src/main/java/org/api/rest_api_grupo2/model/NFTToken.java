@@ -3,6 +3,8 @@ package org.api.rest_api_grupo2.model;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -19,6 +21,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.api.rest_api_grupo2.enums.ArtType;
+import org.api.rest_api_grupo2.enums.Role;
 
 @Getter
 @Setter
@@ -44,13 +48,14 @@ public class NFTToken {
     private LocalDateTime releaseDate;
 
     @Column(name = "art_type")
-    private String artType;
+    @Enumerated(EnumType.STRING)
+    private ArtType artType;
 
     @Column(name = "physical_pieces")
     private Integer physicalPieces;
 
-    @Column(name = "sold")
-    private Boolean sold;
+    @Column(name = "available")
+    private Boolean available;
 
     @OneToMany(mappedBy = "nftToken", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ImageUrl> imageUrls;

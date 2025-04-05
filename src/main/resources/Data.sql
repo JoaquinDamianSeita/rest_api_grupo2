@@ -1,4 +1,4 @@
--- Users
+/*-- Users
 INSERT INTO users (
     id, username, email, password, role,
     first_name, last_name, address, registration_date, biography
@@ -38,3 +38,4 @@ INSERT INTO sales (id, user_id, sale_date) VALUES
 -- Sale Tokens
 INSERT INTO sale_tokens (sale_id, token_id, sale_price) VALUES
     (1, 2, 750.00);
+*/

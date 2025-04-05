@@ -35,6 +35,9 @@ public class Cart {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    @Column(name = "confirmed_at")
+    private LocalDateTime confirmedAt;
+
     @ManyToMany
     @JoinTable(
             name = "cart_tokens",
