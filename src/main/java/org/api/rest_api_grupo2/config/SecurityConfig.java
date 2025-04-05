@@ -52,7 +52,7 @@ public class SecurityConfig {
                         //.requestMatchers("/api/v1/fresh-products/inboundorder").hasAuthority("REPRESENTATIVE")
                         //.requestMatchers("/api/v1/fresh-products/list").hasAuthority("BUYER")
                         //.requestMatchers("/api/v1/fresh-products/orders/**").hasAuthority("BUYER")
-                        //.requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/users/**").permitAll()
                         .requestMatchers("/ping").permitAll()
 
                         .anyRequest().authenticated()
