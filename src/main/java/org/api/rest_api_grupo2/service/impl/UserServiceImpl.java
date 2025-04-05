@@ -2,11 +2,14 @@ package org.api.rest_api_grupo2.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import org.api.rest_api_grupo2.dto.request.LoginRequest;
 import org.api.rest_api_grupo2.dto.request.RegisterRequest;
+import org.api.rest_api_grupo2.dto.request.UpdateRequest;
 import org.api.rest_api_grupo2.dto.response.LoginResponseDto;
 import org.api.rest_api_grupo2.dto.response.MessageResponseDto;
 import org.api.rest_api_grupo2.exceptions.NotAuthorizedException;
+import org.api.rest_api_grupo2.exceptions.NotFoundException;
 import org.api.rest_api_grupo2.exceptions.UnprocessableEntityException;
 import org.api.rest_api_grupo2.jwt.JwtUtil;
 import org.api.rest_api_grupo2.model.Role;
@@ -19,6 +22,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -87,5 +91,54 @@ public class UserServiceImpl implements IUserService {
         } catch (BadCredentialsException e) {
             throw new NotAuthorizedException("Credenciales incorrectas.");
         }
+    }
+
+    @Override
+    public MessageResponseDto updateUser(Long id, UpdateRequest request) {
+        Optional<User> user = userRepository.findById(id);
+
+        if (user.isEmpty()) {
+            throw new NotFoundException("El usuario no existe.");
+        }
+
+        validateAuthorizedUser(id);
+
+        if (request.getEmail() != null) {
+            Optional<User> existingUser = userRepository.findByEmail(request.getEmail());
+            if (existingUser.isPresent() && !existingUser.get().getId().equals(id)) {
+                throw new UnprocessableEntityException("El email ya está en uso.");
+            }
+            user.get().setEmail(request.getEmail());
+        }
+
+        Optional<Role> role = roleRepository.findById(request.getRoleId());
+
+        if (role.isEmpty()) {
+            throw new UnprocessableEntityException("El rol no existe.");
+        }
+
+        User userUpdated = user.get();
+        userUpdated.setFirstName(request.getFirstName());
+        userUpdated.setLastName(request.getLastName());
+        userUpdated.setAddress(request.getAddress());
+        userUpdated.setBiography(request.getBiography());
+        userUpdated.setRole(role.get());
+
+        userRepository.save(userUpdated);
+
+        return new MessageResponseDto("Usuario actualizado con éxito.");
+    }
+
+    @Override
+    public User validateAuthorizedUser(Long userId) {
+        Authentication authentication;
+        authentication = SecurityContextHolder.getContext().getAuthentication();
+        User userAuthenticated = (User) authentication.getPrincipal();
+
+        if (!Objects.equals(userAuthenticated.getId(), userId)) {
+            throw new NotAuthorizedException("No tienes permiso para acceder a este recurso.");
+        }
+
+        return userAuthenticated;
     }
 }

@@ -7,10 +7,9 @@ INSERT INTO users (
     id, username, email, password, role_id,
     first_name, last_name, address, registration_date, biography
 ) VALUES
-      (1, 'alice', 'alice@example.com', 'pass123', 1,
+      (1, 'alice', 'alice@example.com', '$2a$10$MZHaWiYqUhImC1hngnfkqu/1xK9wjg6xTotL8bksNVQaQ89SUF.Xi', 1,
        'Alice', 'Smith', '123 Main St, Cityville', NOW(), 'Digital art enthusiast and collector of rare tokens'),
-
-      (2, 'bob', 'bob@example.com', 'pass456', 2,
+      (2, 'bob', 'bob@example.com', '$2a$10$MZHaWiYqUhImC1hngnfkqu/1xK9wjg6xTotL8bksNVQaQ89SUF.Xi', 2,
        'Bob', 'Johnson', '456 Art Lane, Paintown', NOW(), 'Painter and 3D artist working with NFTs');
 
 -- NFT Tokens
@@ -38,4 +37,4 @@ INSERT INTO sales (
 INSERT INTO sale_tokens (
     sale_id, token_id, sale_price
 ) VALUES
-      (1, 1, 450.00);
+    (1, 1, 450.00);
