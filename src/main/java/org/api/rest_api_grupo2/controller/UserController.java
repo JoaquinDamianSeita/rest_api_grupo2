@@ -1,6 +1,7 @@
 package org.api.rest_api_grupo2.controller;
 
 import jakarta.validation.Valid;
+import org.api.rest_api_grupo2.dto.request.LoginRequest;
 import org.api.rest_api_grupo2.dto.request.RegisterRequest;
 import org.api.rest_api_grupo2.service.IUserService;
 import org.api.rest_api_grupo2.service.impl.UserServiceImpl;
@@ -22,5 +23,10 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request) {
         return new ResponseEntity<>(userService.saveNewUser(request), HttpStatus.OK);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+        return ResponseEntity.ok(userService.login(request));
     }
 }

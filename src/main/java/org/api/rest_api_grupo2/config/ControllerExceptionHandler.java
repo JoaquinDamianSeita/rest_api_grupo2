@@ -2,6 +2,7 @@ package org.api.rest_api_grupo2.config;
 
 import org.api.rest_api_grupo2.dto.response.ValidationErrorDto;
 import org.api.rest_api_grupo2.exceptions.ApiError;
+import org.api.rest_api_grupo2.exceptions.NotAuthorizedException;
 import org.api.rest_api_grupo2.exceptions.UnprocessableEntityException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,6 +83,15 @@ public class ControllerExceptionHandler {
                 .body(apiError);
     }
 
+
+    @ExceptionHandler(NotAuthorizedException.class)
+    public ResponseEntity<?> notFound(NotAuthorizedException e) {
+         ApiError apiError =
+                new ApiError(
+                         "not_authorized", e.getMessage(), HttpStatus.UNAUTHORIZED.value());
+         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(apiError);
+    }
+
     // TODO: Handler for NotFoundException not found resources
     // @ExceptionHandler(NotFoundException.class)
     // public ResponseEntity<?> notFound(NotFoundException e) {
@@ -91,4 +101,5 @@ public class ControllerExceptionHandler {
     //                     "resource_not_found", e.getMessage(), HttpStatus.NOT_FOUND.value());
     //     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(apiError);
     // }
+
 }
