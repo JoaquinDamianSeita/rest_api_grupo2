@@ -3,6 +3,8 @@ package org.api.rest_api_grupo2.service.impl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
 import java.util.Objects;
+
+import org.apache.coyote.BadRequestException;
 import org.api.rest_api_grupo2.dto.request.LoginRequest;
 import org.api.rest_api_grupo2.dto.request.RegisterRequest;
 import org.api.rest_api_grupo2.dto.request.UpdateRequest;
@@ -140,5 +142,14 @@ public class UserServiceImpl implements IUserService {
         }
 
         return userAuthenticated;
+    }
+
+    @Override
+    public User getAutheticatedUser() throws BadRequestException {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof User){
+            return (User) authentication.getPrincipal();
+        }
+        throw new BadRequestException("No hay un usuario autenticado");
     }
 }
