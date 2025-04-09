@@ -54,6 +54,8 @@ public class SecurityConfig {
                         //.requestMatchers("/api/v1/fresh-products/orders/**").hasAuthority("BUYER")
                         .requestMatchers("/api/users/**").permitAll()
                         .requestMatchers("/ping").permitAll()
+                        .requestMatchers("/api/nfts/**").permitAll()
+                        .requestMatchers("/ping").hasAuthority("ARTIST")
 
                         .anyRequest().authenticated()
                 )

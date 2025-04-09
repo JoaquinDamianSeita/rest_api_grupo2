@@ -1,4 +1,4 @@
--- Roles
+/*-- Roles
 INSERT INTO roles (id, name) VALUES
                                  (1, 'BUYER'),
                                  (2, 'ARTIST');
@@ -38,3 +38,4 @@ INSERT INTO sale_tokens (
     sale_id, token_id, sale_price
 ) VALUES
     (1, 1, 450.00);
+*/
