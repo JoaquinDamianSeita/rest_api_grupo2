@@ -48,7 +48,6 @@ public class NFTTokenServiceImpl implements INFTTokenService {
         nft.setAvailable(request.getAvailable());
         nft.setReleaseDate(LocalDateTime.now());
 
-        //auth?? !!!!!!!!!!!
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
         nft.setUser(user);
@@ -59,15 +58,14 @@ public class NFTTokenServiceImpl implements INFTTokenService {
                 .map(url -> {
                     ImageUrl img = new ImageUrl();
                     img.setUrl(url);
-                    img.setNftToken(savedNFT); // 👈 ASOCIÁS el NFT
+                    img.setNftToken(savedNFT);
                     return imageUrlRepository.save(img);
                 }).collect(Collectors.toList());
-
         savedNFT.setImageUrls(images);
         return nftTokenRepository.save(savedNFT);
     }
 
-
+    //Actualizamos el Token
     @Override
     public NFTToken updateNFT(Long id, NFTCreateRequest request) {
         NFTToken existingNFT = nftTokenRepository.findById(id)
@@ -84,7 +82,7 @@ public class NFTTokenServiceImpl implements INFTTokenService {
         List<ImageUrl> newImageUrls = request.getImageUrls().stream().map(url -> {
             ImageUrl image = new ImageUrl();
             image.setUrl(url);
-            image.setNftToken(existingNFT); // muy importante
+            image.setNftToken(existingNFT);
             return image;
         }).collect(Collectors.toList());
 
@@ -93,6 +91,7 @@ public class NFTTokenServiceImpl implements INFTTokenService {
 
         return nftTokenRepository.save(existingNFT);
     }
+    // hacemos el show
     @Override
     public NFTResponse getNFTById(Long id) {
         NFTToken nft = nftTokenRepository.findById(id)
@@ -100,11 +99,12 @@ public class NFTTokenServiceImpl implements INFTTokenService {
         return toResponse(nft);
     }
 
+    //Index - retorna todos los nfts
     @Override
     public List<NFTToken> getAllNFTs() {
         return nftTokenRepository.findAll();
     }
-
+    // Delete - por ID
     @Override
     public void deleteNFT(Long id) {
         NFTToken nft = nftTokenRepository.findById(id)

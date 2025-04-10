@@ -1,5 +1,6 @@
 package org.api.rest_api_grupo2.controller;
 
+import org.api.rest_api_grupo2.dto.response.MessageResponseDto;
 import org.api.rest_api_grupo2.dto.response.NFTResponse;
 import org.api.rest_api_grupo2.service.INFTTokenService;
 import org.api.rest_api_grupo2.service.impl.NFTTokenServiceImpl;
@@ -43,7 +44,8 @@ public class NFTTokenController {
     public ResponseEntity<NFTResponse> getNFTById(@PathVariable Long id) {
         NFTResponse response = nftTokenService.getNFTById(id);
         return ResponseEntity.ok(response);
-}
+    }
+
     @GetMapping // index
     public ResponseEntity<List<NFTResponse>> getAllNFTs() {
         List<NFTToken> nfts = nftTokenService.getAllNFTs();
@@ -52,12 +54,13 @@ public class NFTTokenController {
                 .toList();
         return ResponseEntity.ok(responses);
     }
-    @DeleteMapping("/{id}") // delete (x id)
-    public ResponseEntity<Void> deleteNFT(@PathVariable Long id) {
-        nftTokenService.deleteNFT(id);
-        return ResponseEntity.noContent().build();
-    }
 
+    @DeleteMapping("/{id}") // delete (por id)
+    public ResponseEntity<MessageResponseDto> deleteNFT(@PathVariable Long id) {
+        nftTokenService.deleteNFT(id);
+        MessageResponseDto message = new MessageResponseDto("NFT con ID " + id + " ha sido eliminado.");
+        return ResponseEntity.ok(message); // Retorna el mensaje con el estado HTTP 200 OK
+    }
 
 }
 
