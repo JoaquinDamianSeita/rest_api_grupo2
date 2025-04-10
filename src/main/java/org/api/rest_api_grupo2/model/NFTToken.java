@@ -1,5 +1,6 @@
 package org.api.rest_api_grupo2.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -60,9 +61,11 @@ public class NFTToken {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnore
     private User user;
 
     @ManyToMany(mappedBy = "tokens")
+    @JsonIgnore
     private List<Cart> carts;
 
     @OneToMany(mappedBy = "token")

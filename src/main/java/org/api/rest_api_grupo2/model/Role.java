@@ -1,5 +1,6 @@
 package org.api.rest_api_grupo2.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -28,5 +29,6 @@ public class Role {
     private String name;
 
     @OneToMany(mappedBy = "role")
+    @JsonIgnore
     private List<User> users;
 }
