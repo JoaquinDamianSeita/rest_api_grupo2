@@ -9,6 +9,7 @@ import org.apache.coyote.BadRequestException;
 import org.api.rest_api_grupo2.dto.request.NFTCartItemRequest;
 import org.api.rest_api_grupo2.dto.response.CartResponseDTO;
 import org.api.rest_api_grupo2.dto.response.CheckoutResponse;
+import org.api.rest_api_grupo2.dto.response.CreateResponse;
 import org.api.rest_api_grupo2.dto.response.MessageResponseDto;
 import org.api.rest_api_grupo2.dto.response.NftTokenInCartDTO;
 import org.api.rest_api_grupo2.enums.ArtType;
@@ -38,7 +39,7 @@ public class CartServiceImpl implements ICartService {
     private IUserService userService;
 
     @Override
-    public MessageResponseDto createCart(NFTCartItemRequest itemRequest) throws NotFoundException, UnprocessableEntityException, BadRequestException {
+    public CreateResponse createCart(NFTCartItemRequest itemRequest) throws NotFoundException, UnprocessableEntityException, BadRequestException {
         User user = userService.getAutheticatedUser();
         Cart cart = new Cart();
         cart.setUser(user);
@@ -60,7 +61,7 @@ public class CartServiceImpl implements ICartService {
         
         cartRepository.save(cart);
         nftTokenRepository.save(nft);
-        return new MessageResponseDto("Carrito registrado con exito.");
+        return new CreateResponse("Carrito registrado con exito.", cart.getId());
     }
 
     @Override
@@ -119,16 +120,22 @@ public class CartServiceImpl implements ICartService {
     }
 
     @Override
-    public MessageResponseDto removeNFT(Long nftTokenId) throws BadRequestException{
-        User user = userService.getAutheticatedUser();
-        Cart cart = cartRepository.findByUserId(user)
-            .orElseThrow(() -> new NotFoundException("Carrito no encontrado."));
+    public MessageResponseDto removeNFT(Long cartId, Long nftTokenId) throws BadRequestException {
+        // Obtener el carrito usando el cartId
+        Cart cart = cartRepository.findById(cartId)
+                .orElseThrow(() -> new NotFoundException("Carrito no encontrado."));
+
         NFTToken nft = nftTokenRepository.findById(nftTokenId)
-            .orElseThrow(() -> new NotFoundException("NFT no encontrado"));
+                .orElseThrow(() -> new NotFoundException("NFT no encontrado"));
+        if (!cart.getTokens().contains(nft)) {
+            throw new BadRequestException("El NFT no está en el carrito.");
+        }
+
         cart.getTokens().remove(nft);
         cartRepository.save(cart);
         return new MessageResponseDto("Item eliminado del carrito con exito.");
     }
+
 
     @Override
     public CheckoutResponse checkoutCart(Long cartId) throws BadRequestException{
