@@ -136,6 +136,8 @@ public class CartServiceImpl implements ICartService {
             .orElseThrow(() -> new NotFoundException("Carrito no encontrado."));
         double total = cart.getTokens().stream().mapToDouble(NFTToken::getPrice).sum();
 
+        cart.setConfirmedAt(LocalDateTime.now());
+        cartRepository.save(cart);
         return new CheckoutResponse("Compra confirmada con exito.", cart.getId(), total, cart.getConfirmedAt());
     }
 }
