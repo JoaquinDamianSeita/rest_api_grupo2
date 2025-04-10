@@ -27,16 +27,14 @@ public class SaleController {
     @Autowired
     private ISaleService saleService;
 
-    @PostMapping("/create")
+    @PostMapping
     public ResponseEntity<?> createSale(@Valid @RequestBody SaleCreateRequest request) throws BadRequestException {
         return new ResponseEntity<>(saleService.createSale(request), HttpStatus.OK);
     }
 
-    @GetMapping("/index") // index
+    @GetMapping // index
     public ResponseEntity<List<SaleResponse>> getSalesByRole(@RequestParam Long userId) {
         List<SaleResponse> sales = saleService.getSalesByRole(userId);
         return new ResponseEntity<>(sales, HttpStatus.OK  );
         }
-    
-    
 }
