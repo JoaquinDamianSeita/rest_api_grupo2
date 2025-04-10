@@ -36,11 +36,11 @@ public class CartController {
     @DeleteMapping("/{cartId}")
     public ResponseEntity<?> deleteCart(@PathVariable Long cartId){
         return new ResponseEntity<>(cartService.deleteCart(cartId), HttpStatus.OK);
-    }    
+    }
 
-    @DeleteMapping("/items/{nftTokenId}")
-    public ResponseEntity<?> removeNFT(@PathVariable Long nftTokenId) throws BadRequestException{
-        return new ResponseEntity<>(cartService.removeNFT(nftTokenId), HttpStatus.OK);
+    @DeleteMapping("/{cartId}/items/{nftTokenId}")
+    public ResponseEntity<?> removeNFT(@PathVariable Long cartId, @PathVariable Long nftTokenId) throws BadRequestException {
+        return new ResponseEntity<>(cartService.removeNFT(cartId, nftTokenId), HttpStatus.OK);
     }
 
     @GetMapping("/{cartId}")

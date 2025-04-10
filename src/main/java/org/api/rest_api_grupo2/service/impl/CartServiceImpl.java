@@ -67,11 +67,11 @@ public class CartServiceImpl implements ICartService {
     public MessageResponseDto updateCart(Long cartId, List<NFTCartItemRequest> items) throws BadRequestException{
         Cart cart = cartRepository.findById(cartId)
             .orElseThrow(() -> new NotFoundException("Carrito no encontrado."));
-        
+
         for(NFTCartItemRequest item : items){
             NFTToken nft = nftTokenRepository.findById(item.getNftId())
                 .orElseThrow(() -> new BadRequestException("NFT no encontrado."));
-            
+
             if(nft.getArtType() == ArtType.PHYSICAL){
                 if(item.getPhysicalPieces() > nft.getPhysicalPieces()){
                     throw new BadRequestException("No hay stock fisico suficiente de este NFT.");
@@ -81,7 +81,7 @@ public class CartServiceImpl implements ICartService {
             cart.getTokens().add(nft);
             nftTokenRepository.save(nft);
         }
-        
+
         cartRepository.save(cart);
         return new MessageResponseDto("Se han agregado los items al carrito.");
     }
@@ -119,12 +119,15 @@ public class CartServiceImpl implements ICartService {
     }
 
     @Override
-    public MessageResponseDto removeNFT(Long nftTokenId) throws BadRequestException{
-        User user = userService.getAutheticatedUser();
-        Cart cart = cartRepository.findByUserId(user)
-            .orElseThrow(() -> new NotFoundException("Carrito no encontrado."));
+    public MessageResponseDto removeNFT(Long cartId, Long nftTokenId) throws BadRequestException {
+        // Obtener el carrito usando el cartId
+        Cart cart = cartRepository.findById(cartId)
+                .orElseThrow(() -> new NotFoundException("Carrito no encontrado."));
         NFTToken nft = nftTokenRepository.findById(nftTokenId)
-            .orElseThrow(() -> new NotFoundException("NFT no encontrado"));
+                .orElseThrow(() -> new NotFoundException("NFT no encontrado"));
+        if (!cart.getTokens().contains(nft)) {
+            throw new BadRequestException("El NFT no está en el carrito.");
+        }
         cart.getTokens().remove(nft);
         cartRepository.save(cart);
         return new MessageResponseDto("Item eliminado del carrito con exito.");
