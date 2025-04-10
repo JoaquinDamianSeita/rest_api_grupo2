@@ -14,7 +14,7 @@ public interface ICartService {
     public MessageResponseDto createCart(NFTCartItemRequest itemRequest) throws BadRequestException;
     public MessageResponseDto updateCart(Long cartId, List<NFTCartItemRequest> items) throws BadRequestException;
     public CartResponseDTO getItems(Long cartId);
-    public MessageResponseDto removeNFT(Long nftTokenId) throws BadRequestException;
+    MessageResponseDto removeNFT(Long cartId, Long nftTokenId) throws BadRequestException;
     public MessageResponseDto deleteCart(Long cartId);
     public CheckoutResponse checkoutCart(Long cartId) throws BadRequestException;
 }

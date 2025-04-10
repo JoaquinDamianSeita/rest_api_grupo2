@@ -119,16 +119,22 @@ public class CartServiceImpl implements ICartService {
     }
 
     @Override
-    public MessageResponseDto removeNFT(Long nftTokenId) throws BadRequestException{
-        User user = userService.getAutheticatedUser();
-        Cart cart = cartRepository.findByUserId(user)
-            .orElseThrow(() -> new NotFoundException("Carrito no encontrado."));
+    public MessageResponseDto removeNFT(Long cartId, Long nftTokenId) throws BadRequestException {
+        // Obtener el carrito usando el cartId
+        Cart cart = cartRepository.findById(cartId)
+                .orElseThrow(() -> new NotFoundException("Carrito no encontrado."));
+
         NFTToken nft = nftTokenRepository.findById(nftTokenId)
-            .orElseThrow(() -> new NotFoundException("NFT no encontrado"));
+                .orElseThrow(() -> new NotFoundException("NFT no encontrado"));
+        if (!cart.getTokens().contains(nft)) {
+            throw new BadRequestException("El NFT no está en el carrito.");
+        }
+
         cart.getTokens().remove(nft);
         cartRepository.save(cart);
         return new MessageResponseDto("Item eliminado del carrito con exito.");
     }
+
 
     @Override
     public CheckoutResponse checkoutCart(Long cartId) throws BadRequestException{

@@ -31,7 +31,6 @@ public class NFTTokenServiceImpl implements INFTTokenService {
         this.imageUrlRepository = imageUrlRepository;
     }
 
-    // creo el token con las request
     @Override
     public NFTToken createNFT(NFTCreateRequest request) {
         NFTToken nft = new NFTToken();
@@ -48,30 +47,26 @@ public class NFTTokenServiceImpl implements INFTTokenService {
         nft.setArtType(tipo);
         nft.setPhysicalPieces(request.getPhysicalPieces());
         nft.setAvailable(request.getAvailable());
-        nft.setReleaseDate(LocalDateTime.now()); // si usás releaseDate
+        nft.setReleaseDate(LocalDateTime.now());
 
-        //auth?? !!!!!!!!!!!
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = (User) authentication.getPrincipal(); // casteamos al tipo User
+        User user = (User) authentication.getPrincipal();
         nft.setUser(user);
 
-        // Paso 1: guardás el NFT para tener el ID
         NFTToken savedNFT = nftTokenRepository.save(nft);
 
-        // Paso 2: creás y guardás las imágenes con el NFT ya vinculado
         List<ImageUrl> images = request.getImageUrls().stream()
                 .map(url -> {
                     ImageUrl img = new ImageUrl();
                     img.setUrl(url);
-                    img.setNftToken(savedNFT); // 👈 ASOCIÁS el NFT
+                    img.setNftToken(savedNFT);
                     return imageUrlRepository.save(img);
                 }).collect(Collectors.toList());
-        //seteás las imágenes al NFT y volvés a guardar (opcional si querés devolverlo completo)
+
         savedNFT.setImageUrls(images);
         return nftTokenRepository.save(savedNFT);
     }
 
-    //Actualizamos el Token
     @Override
     public NFTToken updateNFT(Long id, NFTCreateRequest request) {
         NFTToken existingNFT = nftTokenRepository.findById(id)
@@ -84,9 +79,6 @@ public class NFTTokenServiceImpl implements INFTTokenService {
         existingNFT.setPhysicalPieces(request.getPhysicalPieces());
         existingNFT.setAvailable(request.getAvailable());
 
-        // El User ya está seteado, no hace falta tocarlo.
-
-        // Limpiamos y reemplazamos imágenes
         List<ImageUrl> newImageUrls = request.getImageUrls().stream().map(url -> {
             ImageUrl image = new ImageUrl();
             image.setUrl(url);
@@ -99,7 +91,6 @@ public class NFTTokenServiceImpl implements INFTTokenService {
 
         return nftTokenRepository.save(existingNFT);
     }
-    // hacemos el show
     @Override
     public NFTResponse getNFTById(Long id) {
         NFTToken nft = nftTokenRepository.findById(id)
@@ -107,12 +98,11 @@ public class NFTTokenServiceImpl implements INFTTokenService {
         return toResponse(nft);
     }
 
-    //Index - retorna todos los nfts
     @Override
     public List<NFTToken> getAllNFTs() {
         return nftTokenRepository.findAll();
     }
-    // Delete - por ID
+
     @Override
     public void deleteNFT(Long id) {
         NFTToken nft = nftTokenRepository.findById(id)
@@ -121,9 +111,6 @@ public class NFTTokenServiceImpl implements INFTTokenService {
         nft.setAvailable(false);
         nftTokenRepository.save(nft);
     }
-
-
-
     public NFTResponse toResponse(NFTToken nft) {
         List<String> imageUrls = nft.getImageUrls().stream()
                 .map(ImageUrl::getUrl)
