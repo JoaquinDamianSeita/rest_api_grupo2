@@ -1,5 +1,6 @@
 package org.api.rest_api_grupo2.config;
 
+import org.apache.coyote.BadRequestException;
 import org.api.rest_api_grupo2.dto.response.ValidationErrorDto;
 import org.api.rest_api_grupo2.exceptions.ApiError;
 import org.api.rest_api_grupo2.exceptions.NotAuthorizedException;
@@ -99,5 +100,13 @@ public class ControllerExceptionHandler {
             new ApiError(
                      "resource_not_found", e.getMessage(), HttpStatus.NOT_FOUND.value());
      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(apiError);
+    }
+
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<?> badRequest(BadRequestException e) {
+     ApiError apiError =
+            new ApiError(
+                     "bad_request", e.getMessage(), HttpStatus.BAD_REQUEST.value());
+     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiError);
     }
 }

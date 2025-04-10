@@ -4,13 +4,18 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.util.stream.Collectors;
 import org.apache.coyote.BadRequestException;
 import org.api.rest_api_grupo2.dto.request.NFTCartItemRequest;
+import org.api.rest_api_grupo2.dto.response.CartResponseDTO;
 import org.api.rest_api_grupo2.dto.response.CheckoutResponse;
 import org.api.rest_api_grupo2.dto.response.MessageResponseDto;
+import org.api.rest_api_grupo2.dto.response.NftTokenInCartDTO;
 import org.api.rest_api_grupo2.enums.ArtType;
 import org.api.rest_api_grupo2.exceptions.NotFoundException;
+import org.api.rest_api_grupo2.exceptions.UnprocessableEntityException;
 import org.api.rest_api_grupo2.model.Cart;
+import org.api.rest_api_grupo2.model.ImageUrl;
 import org.api.rest_api_grupo2.model.NFTToken;
 import org.api.rest_api_grupo2.model.User;
 import org.api.rest_api_grupo2.repository.CartRepository;
@@ -33,7 +38,7 @@ public class CartServiceImpl implements ICartService {
     private IUserService userService;
 
     @Override
-    public MessageResponseDto createCart(NFTCartItemRequest itemRequest) throws BadRequestException{
+    public MessageResponseDto createCart(NFTCartItemRequest itemRequest) throws NotFoundException, UnprocessableEntityException, BadRequestException {
         User user = userService.getAutheticatedUser();
         Cart cart = new Cart();
         cart.setUser(user);
@@ -41,11 +46,11 @@ public class CartServiceImpl implements ICartService {
 
         List<NFTToken> nftList = new ArrayList<>();
         NFTToken nft = nftTokenRepository.findById(itemRequest.getNftId())
-            .orElseThrow(() -> new BadRequestException("NFT no encontrado."));
+            .orElseThrow(() -> new NotFoundException("NFT no encontrado."));
         
         if(nft.getArtType() == ArtType.PHYSICAL){
             if(itemRequest.getPhysicalPieces() > nft.getPhysicalPieces()){
-                throw new BadRequestException("No hay stock fisico suficiente de este NFT.");
+                throw new UnprocessableEntityException("No hay stock fisico suficiente de este NFT.");
             }
             nft.setPhysicalPieces(nft.getPhysicalPieces() - itemRequest.getPhysicalPieces());
         }
@@ -82,15 +87,34 @@ public class CartServiceImpl implements ICartService {
     }
 
     @Override
-    public List<NFTToken> getItems(Long cartId){
+    public CartResponseDTO getItems(Long cartId) {
         Cart cart = cartRepository.findById(cartId)
-            .orElseThrow(() -> new NotFoundException("Carrito no encontrado."));
-        return cart.getTokens();
+                .orElseThrow(() -> new NotFoundException("Carrito no encontrado."));
+
+        List<NftTokenInCartDTO> nftTokens = cart.getTokens().stream().map(token -> {
+            List<String> imageUrls = token.getImageUrls().stream()
+                    .map(ImageUrl::getUrl)
+                    .collect(Collectors.toList());
+
+            return new NftTokenInCartDTO(
+                    token.getId(),
+                    token.getTitle(),
+                    token.getPrice(),
+                    imageUrls,
+                    token.getPhysicalPieces(),
+                    token.getArtType().name().equalsIgnoreCase("PHYSICAL") ? "Fisico" : "Digital"
+            );
+        }).collect(Collectors.toList());
+
+        return new CartResponseDTO(cart.getId(), nftTokens);
     }
 
     @Override
     public MessageResponseDto deleteCart(Long cartId){
-        cartRepository.deleteById(cartId);
+        Cart cart = cartRepository.findById(cartId)
+                .orElseThrow(() -> new NotFoundException("Carrito no encontrado."));
+
+        cartRepository.deleteById(cart.getId());
         return new MessageResponseDto("Carrito eliminado con exito.");
     }
 
@@ -107,9 +131,8 @@ public class CartServiceImpl implements ICartService {
     }
 
     @Override
-    public CheckoutResponse checkoutCart() throws BadRequestException{
-        User user = userService.getAutheticatedUser();
-        Cart cart = cartRepository.findByUserId(user)
+    public CheckoutResponse checkoutCart(Long cartId) throws BadRequestException{
+        Cart cart = cartRepository.findById(cartId)
             .orElseThrow(() -> new NotFoundException("Carrito no encontrado."));
         double total = cart.getTokens().stream().mapToDouble(NFTToken::getPrice).sum();
 

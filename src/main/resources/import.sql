@@ -1,4 +1,5 @@
-/*-- Roles
+/*
+-- Roles
 INSERT INTO roles (id, name) VALUES
                                  (1, 'BUYER'),
                                  (2, 'ARTIST');
@@ -30,7 +31,7 @@ INSERT INTO image_urls (
 INSERT INTO sales (
     id, user_id, sale_date
 ) VALUES
-      (1, 1, '2023-10-01 12:00:00');
+    (1, 1, '2023-10-01 12:00:00');
 
 -- Sale Tokens
 -- Insert for SaleToken
@@ -38,4 +39,4 @@ INSERT INTO sale_tokens (
     sale_id, token_id, sale_price
 ) VALUES
     (1, 1, 450.00);
-*/
+ */

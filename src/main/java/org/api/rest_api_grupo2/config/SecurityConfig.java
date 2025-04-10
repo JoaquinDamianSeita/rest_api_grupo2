@@ -48,10 +48,6 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        // TODO: Replace with real services
-                        //.requestMatchers("/api/v1/fresh-products/inboundorder").hasAuthority("REPRESENTATIVE")
-                        //.requestMatchers("/api/v1/fresh-products/list").hasAuthority("BUYER")
-                        //.requestMatchers("/api/v1/fresh-products/orders/**").hasAuthority("BUYER")
                         .requestMatchers("/api/users/**").permitAll()
                         .requestMatchers("/ping").permitAll()
                         .requestMatchers("/api/nfts/**").permitAll()

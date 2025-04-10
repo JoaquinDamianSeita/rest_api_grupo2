@@ -2,6 +2,7 @@ package org.api.rest_api_grupo2.service.impl;
 
 import org.api.rest_api_grupo2.dto.request.NFTCreateRequest;
 import org.api.rest_api_grupo2.enums.ArtType;
+import org.api.rest_api_grupo2.exceptions.NotFoundException;
 import org.api.rest_api_grupo2.model.ImageUrl;
 import org.api.rest_api_grupo2.model.User;
 import org.api.rest_api_grupo2.model.NFTToken;
@@ -9,14 +10,12 @@ import org.api.rest_api_grupo2.repository.ImageUrlRepository;
 import org.api.rest_api_grupo2.repository.NFTTokenRepository;
 import org.api.rest_api_grupo2.dto.response.NFTResponse;
 import org.api.rest_api_grupo2.service.INFTTokenService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,7 +43,7 @@ public class NFTTokenServiceImpl implements INFTTokenService {
         try {
             tipo = ArtType.valueOf(request.getArtType().toUpperCase());
         } catch (IllegalArgumentException e) {
-            throw new RuntimeException("Tipo de arte inválido: " + request.getArtType());
+            throw new NotFoundException("Tipo de arte inválido: " + request.getArtType());
         }
         nft.setArtType(tipo);
         nft.setPhysicalPieces(request.getPhysicalPieces());
@@ -76,7 +75,7 @@ public class NFTTokenServiceImpl implements INFTTokenService {
     @Override
     public NFTToken updateNFT(Long id, NFTCreateRequest request) {
         NFTToken existingNFT = nftTokenRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("NFT no encontrado con id: " + id));
+                .orElseThrow(() -> new NotFoundException("NFT no encontrado con id: " + id));
 
         existingNFT.setTitle(request.getTitle());
         existingNFT.setDescription(request.getDescription());
@@ -104,7 +103,7 @@ public class NFTTokenServiceImpl implements INFTTokenService {
     @Override
     public NFTResponse getNFTById(Long id) {
         NFTToken nft = nftTokenRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("NFT no encontrado con id: " + id));
+                .orElseThrow(() -> new NotFoundException("NFT no encontrado con id: " + id));
         return toResponse(nft);
     }
 
@@ -117,8 +116,10 @@ public class NFTTokenServiceImpl implements INFTTokenService {
     @Override
     public void deleteNFT(Long id) {
         NFTToken nft = nftTokenRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("NFT no encontrado con id: " + id));
-        nftTokenRepository.delete(nft);
+                .orElseThrow(() -> new NotFoundException("NFT no encontrado con id: " + id));
+
+        nft.setAvailable(false);
+        nftTokenRepository.save(nft);
     }
 
 

@@ -1,5 +1,6 @@
 package org.api.rest_api_grupo2.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -58,12 +59,15 @@ public class User implements UserDetails {
     private LocalDateTime registrationDate;
 
     @OneToMany(mappedBy = "user")
+    @JsonIgnore
     private List<NFTToken> nftTokens;
 
     @OneToMany(mappedBy = "user")
+    @JsonIgnore
     private List<Cart> carts;
 
     @OneToMany(mappedBy = "user")
+    @JsonIgnore
     private List<Sale> sales;
 
     @ManyToOne

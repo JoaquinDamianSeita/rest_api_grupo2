@@ -1,5 +1,6 @@
 package org.api.rest_api_grupo2.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -28,6 +29,7 @@ public class ImageUrl {
     private String url;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "nft_token_id", nullable = false)
     private NFTToken nftToken;
 }

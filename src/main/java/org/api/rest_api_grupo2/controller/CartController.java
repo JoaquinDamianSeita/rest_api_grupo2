@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.apache.coyote.BadRequestException;
 import org.api.rest_api_grupo2.dto.request.NFTCartItemRequest;
+import org.api.rest_api_grupo2.dto.response.CartResponseDTO;
+import org.api.rest_api_grupo2.dto.response.NftTokenInCartDTO;
 import org.api.rest_api_grupo2.model.NFTToken;
 import org.api.rest_api_grupo2.service.ICartService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +46,7 @@ public class CartController {
     }
 
     @GetMapping("/{cartId}")
-    public ResponseEntity<List<NFTToken>> getItems(@PathVariable Long cartId) {
+    public ResponseEntity<CartResponseDTO> getItems(@PathVariable Long cartId) {
         return new ResponseEntity<>(cartService.getItems(cartId), HttpStatus.OK);
     }
 
@@ -54,7 +56,7 @@ public class CartController {
     }
 
     @PostMapping("/checkout")
-    public ResponseEntity<?> checkoutCart() throws BadRequestException {
-        return new ResponseEntity<>(cartService.checkoutCart(), HttpStatus.OK);
+    public ResponseEntity<?> checkoutCart(@PathVariable Long cartId) throws BadRequestException {
+        return new ResponseEntity<>(cartService.checkoutCart(cartId), HttpStatus.OK);
     }
 }
