@@ -4,13 +4,14 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.api.rest_api_grupo2.dto.request.SaleCreateRequest;
 import org.api.rest_api_grupo2.dto.response.SaleResponse;
 import org.api.rest_api_grupo2.model.NFTToken;
 import org.api.rest_api_grupo2.model.Sale;
 import org.api.rest_api_grupo2.model.SaleToken;
 import org.api.rest_api_grupo2.model.User;
 import org.api.rest_api_grupo2.model.serializables.SaleTokenId;
-import org.api.rest_api_grupo2.repository.RoleRepository;
+import org.api.rest_api_grupo2.repository.NFTTokenRepository;
 import org.api.rest_api_grupo2.repository.SaleRepository;
 import org.api.rest_api_grupo2.repository.SaleTokenRepository;
 import org.api.rest_api_grupo2.repository.UserRepository;
@@ -27,14 +28,14 @@ public class SaleServiceImpl implements ISaleService {
     private UserRepository userRepository;
 
     @Autowired
-    private RoleRepository roleRepository;
-
-    @Autowired
     private SaleTokenRepository saleTokenRepository;
 
+    @Autowired
+    private NFTTokenRepository nftTokenRepository;
+
     @Override
-    public Sale createSale(saleCreateRequest saleRequest) {
-            // Obtener el usuario (comprador)
+    public Sale createSale(SaleCreateRequest saleRequest) {
+            // Obtener el comprador
     User buyer = userRepository.findById(saleRequest.getBuyerId())
         .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
 
@@ -44,11 +45,11 @@ public class SaleServiceImpl implements ISaleService {
     sale.setSaleDate(LocalDateTime.now());
 
     // Guardar la venta para generar el ID
-    sale = saleRepository.save(sale);
+    final Sale savedSale = saleRepository.save(sale);
 
     // Procesar los tokens
     List<SaleToken> saleTokens = saleRequest.getTokenIds().stream()
-        .map(tokenId -> createSaleToken(sale, tokenId))
+        .map(tokenId -> createSaleToken(savedSale, tokenId))
         .toList();
 
     // Guardar las relaciones SaleToken
@@ -64,7 +65,7 @@ public class SaleServiceImpl implements ISaleService {
     return sale;
 }
 
-// Crear un SaleToken a partir de una venta y un token ID
+// Creamos un SaleToken a partir de una venta y un token ID
 private SaleToken createSaleToken(Sale sale, Long tokenId) {
     NFTToken token = nftTokenRepository.findById(tokenId)
         .orElseThrow(() -> new IllegalArgumentException("Token no encontrado o no disponible"));
@@ -85,18 +86,21 @@ private SaleToken createSaleToken(Sale sale, Long tokenId) {
 
     return saleToken;
 }
-    }
+    
 
     @Override
     public List<Sale> getAllSales() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAllSales'");
+        return saleRepository.findAll();
     }
 
     @Override
     public SaleResponse toResponse(Sale sale) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'toResponse'");
+        SaleResponse response = new SaleResponse();
+        response.setId(sale.getId());
+        response.setSaleDate(sale.getSaleDate());
+        
+        return response;
+        
     }
 
     private SaleResponse mapToSaleResponse(Sale sale) {
@@ -141,5 +145,6 @@ private boolean isSaleRelatedToArtist(Sale sale, Long artistId) {
     return saleTokens.stream()
         .anyMatch(saleToken -> saleToken.getToken().getUser().getId().equals(artistId));
 }
+
 
 }
