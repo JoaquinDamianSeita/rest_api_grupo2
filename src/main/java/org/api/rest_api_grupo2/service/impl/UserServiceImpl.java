@@ -2,6 +2,7 @@ package org.api.rest_api_grupo2.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 import org.apache.coyote.BadRequestException;
@@ -52,10 +53,10 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public MessageResponseDto saveNewUser(RegisterRequest request) {
-        Optional<User> existingUser = userRepository.findByEmail((request.getEmail()));
+        List<Optional<User>> existingUsers = userRepository.findByEmailOrUsername(request.getEmail(), request.getUsername());
 
-        if (existingUser.isPresent()) {
-            throw new UnprocessableEntityException("El email ya está en uso.");
+        if (!existingUsers.isEmpty()) {
+            throw new UnprocessableEntityException("El email o el username ya está en uso.");
         }
 
         Optional<Role> role = roleRepository.findById(request.getRoleId());
