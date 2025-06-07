@@ -10,6 +10,7 @@ import org.api.rest_api_grupo2.dto.request.RegisterRequest;
 import org.api.rest_api_grupo2.dto.request.UpdateRequest;
 import org.api.rest_api_grupo2.dto.response.LoginResponseDto;
 import org.api.rest_api_grupo2.dto.response.MessageResponseDto;
+import org.api.rest_api_grupo2.dto.response.UserResponseDto;
 import org.api.rest_api_grupo2.exceptions.NotAuthorizedException;
 import org.api.rest_api_grupo2.exceptions.NotFoundException;
 import org.api.rest_api_grupo2.exceptions.UnprocessableEntityException;
@@ -96,39 +97,47 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public MessageResponseDto updateUser(Long id, UpdateRequest request) {
-        Optional<User> user = userRepository.findById(id);
-
-        if (user.isEmpty()) {
-            throw new NotFoundException("El usuario no existe.");
-        }
-
-        validateAuthorizedUser(id);
+    public MessageResponseDto updateUser(UpdateRequest request) throws BadRequestException {
+        User user = getAutheticatedUser();
 
         if (request.getEmail() != null) {
             Optional<User> existingUser = userRepository.findByEmail(request.getEmail());
-            if (existingUser.isPresent() && !existingUser.get().getId().equals(id)) {
+            if (existingUser.isPresent() && !existingUser.get().getId().equals(user.getId())) {
                 throw new UnprocessableEntityException("El email ya está en uso.");
             }
-            user.get().setEmail(request.getEmail());
+            user.setEmail(request.getEmail());
         }
 
         Optional<Role> role = roleRepository.findById(request.getRoleId());
-
         if (role.isEmpty()) {
             throw new UnprocessableEntityException("El rol no existe.");
         }
 
-        User userUpdated = user.get();
-        userUpdated.setFirstName(request.getFirstName());
-        userUpdated.setLastName(request.getLastName());
-        userUpdated.setAddress(request.getAddress());
-        userUpdated.setBiography(request.getBiography());
-        userUpdated.setRole(role.get());
+        user.setFirstName(request.getFirstName());
+        user.setLastName(request.getLastName());
+        user.setAddress(request.getAddress());
+        user.setBiography(request.getBiography());
+        user.setRole(role.get());
 
-        userRepository.save(userUpdated);
+        userRepository.save(user);
 
         return new MessageResponseDto("Usuario actualizado con éxito.");
+    }
+
+    @Override
+    public UserResponseDto getAuthenticatedUserInfo() throws BadRequestException {
+        User user = getAutheticatedUser();
+
+        UserResponseDto response = new UserResponseDto();
+        response.setUsername(user.getUsername());
+        response.setEmail(user.getEmail());
+        response.setFirstName(user.getFirstName());
+        response.setLastName(user.getLastName());
+        response.setAddress(user.getAddress());
+        response.setBiography(user.getBiography());
+        response.setRoleName(user.getRole().getName());
+
+        return response;
     }
 
     @Override
