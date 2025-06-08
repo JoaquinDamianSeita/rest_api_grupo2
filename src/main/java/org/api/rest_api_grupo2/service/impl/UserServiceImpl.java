@@ -109,16 +109,18 @@ public class UserServiceImpl implements IUserService {
             user.setEmail(request.getEmail());
         }
 
-        Optional<Role> role = roleRepository.findById(request.getRoleId());
-        if (role.isEmpty()) {
-            throw new UnprocessableEntityException("El rol no existe.");
+        if (request.getRoleId() != null) {
+            Optional<Role> role = roleRepository.findById(request.getRoleId());
+            if (role.isEmpty()) {
+                throw new UnprocessableEntityException("El rol no existe.");
+            }
+            user.setRole(role.get());
         }
 
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
         user.setAddress(request.getAddress());
         user.setBiography(request.getBiography());
-        user.setRole(role.get());
 
         userRepository.save(user);
 
