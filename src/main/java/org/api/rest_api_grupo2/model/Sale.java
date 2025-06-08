@@ -13,12 +13,11 @@ import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Getter
-@Setter
+
+@Data
 @Entity
 @Table(name = "sales")
 @NoArgsConstructor
@@ -37,4 +36,12 @@ public class Sale {
 
     @OneToMany(mappedBy = "sale", cascade = CascadeType.ALL)
     private List<SaleToken> saleTokens;
+
+    @Column(name = "sale_price")
+    private double salePrice;   
+
+    @ManyToOne
+    @JoinColumn(name = "cart_id")
+    private Cart cart; // Relación con el carrito
+
 }

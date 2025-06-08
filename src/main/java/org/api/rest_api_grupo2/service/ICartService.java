@@ -6,7 +6,6 @@ import org.apache.coyote.BadRequestException;
 import org.api.rest_api_grupo2.dto.request.NFTCartItemRequest;
 import org.api.rest_api_grupo2.dto.response.CartResponseDTO;
 import org.api.rest_api_grupo2.dto.response.CheckoutResponse;
-import org.api.rest_api_grupo2.dto.response.CreateResponse;
 import org.api.rest_api_grupo2.dto.response.MessageResponseDto;
 
 public interface ICartService {

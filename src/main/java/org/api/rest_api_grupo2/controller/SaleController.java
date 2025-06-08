@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.coyote.BadRequestException;
 import org.api.rest_api_grupo2.dto.request.SaleCreateRequest;
 import org.api.rest_api_grupo2.dto.response.SaleResponse;
+import org.api.rest_api_grupo2.model.Sale;
 import org.api.rest_api_grupo2.service.ISaleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,9 +29,11 @@ public class SaleController {
     private ISaleService saleService;
 
     @PostMapping
-    public ResponseEntity<?> createSale(@Valid @RequestBody SaleCreateRequest request) throws BadRequestException {
-        return new ResponseEntity<>(saleService.createSale(request), HttpStatus.OK);
-    }
+    public ResponseEntity<SaleResponse> createSale(@Valid @RequestBody SaleCreateRequest request) {
+        Sale sale = saleService.createSale(request);
+        SaleResponse response = saleService.toResponse(sale);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+}
 
     @GetMapping // index
     public ResponseEntity<List<SaleResponse>> getSalesByRole(@RequestParam Long userId) {
