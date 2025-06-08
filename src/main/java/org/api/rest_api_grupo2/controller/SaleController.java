@@ -1,7 +1,7 @@
 package org.api.rest_api_grupo2.controller;
 
+import jakarta.validation.Valid;
 import java.util.List;
-
 import org.apache.coyote.BadRequestException;
 import org.api.rest_api_grupo2.dto.request.SaleCreateRequest;
 import org.api.rest_api_grupo2.dto.response.SaleResponse;
@@ -9,17 +9,11 @@ import org.api.rest_api_grupo2.service.ISaleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import jakarta.validation.Valid;
-
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
-
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/sales")
@@ -33,8 +27,8 @@ public class SaleController {
     }
 
     @GetMapping // index
-    public ResponseEntity<List<SaleResponse>> getSalesByRole(@RequestParam Long userId) {
-        List<SaleResponse> sales = saleService.getSalesByRole(userId);
-        return new ResponseEntity<>(sales, HttpStatus.OK  );
-        }
+    public ResponseEntity<List<SaleResponse>> getSalesByRole() throws BadRequestException {
+        List<SaleResponse> sales = saleService.getSalesByUser();
+        return new ResponseEntity<>(sales, HttpStatus.OK);
+    }
 }
