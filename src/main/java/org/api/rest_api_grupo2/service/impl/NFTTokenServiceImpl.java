@@ -127,7 +127,8 @@ public class NFTTokenServiceImpl implements INFTTokenService {
                 nft.getArtType().toString(),
                 nft.getPhysicalPieces(),
                 nft.getAvailable(),
-                imageUrls
+                imageUrls,
+                nft.getUser().getId()
         );
     }
 
