@@ -139,6 +139,7 @@ public class UserServiceImpl implements IUserService {
         response.setAddress(user.getAddress());
         response.setBiography(user.getBiography());
         response.setRoleName(user.getRole().getName());
+        response.setUserId(user.getId());
 
         return response;
     }

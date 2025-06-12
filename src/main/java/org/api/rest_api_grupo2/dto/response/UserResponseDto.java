@@ -11,4 +11,5 @@ public class UserResponseDto {
     private String address;
     private String biography;
     private String roleName;
+    private Long userId;
 }
