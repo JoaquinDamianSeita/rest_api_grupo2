@@ -7,10 +7,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.apache.coyote.BadRequestException;
 import org.api.rest_api_grupo2.dto.request.NFTCartItemRequest;
-import org.api.rest_api_grupo2.dto.response.CartResponseDTO;
-import org.api.rest_api_grupo2.dto.response.CheckoutResponse;
-import org.api.rest_api_grupo2.dto.response.MessageResponseDto;
-import org.api.rest_api_grupo2.dto.response.NftTokenInCartDTO;
+import org.api.rest_api_grupo2.dto.response.*;
 import org.api.rest_api_grupo2.enums.ArtType;
 import org.api.rest_api_grupo2.exceptions.NotFoundException;
 import org.api.rest_api_grupo2.exceptions.UnprocessableEntityException;
@@ -38,7 +35,7 @@ public class CartServiceImpl implements ICartService {
     private IUserService userService;
 
     @Override
-    public MessageResponseDto createCart(NFTCartItemRequest itemRequest) throws NotFoundException, UnprocessableEntityException, BadRequestException {
+    public CreateCartResponseDto createCart(NFTCartItemRequest itemRequest) throws NotFoundException, UnprocessableEntityException, BadRequestException {
         User user = userService.getAutheticatedUser();
         Cart cart = new Cart();
         cart.setUser(user);
@@ -60,7 +57,7 @@ public class CartServiceImpl implements ICartService {
         
         cartRepository.save(cart);
         nftTokenRepository.save(nft);
-        return new MessageResponseDto("Carrito registrado con exito.");
+        return new CreateCartResponseDto("Carrito registrado con exito.", cart.getId());
     }
 
     @Override

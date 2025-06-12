@@ -4,6 +4,7 @@ import org.api.rest_api_grupo2.jwt.JwtAuthenticationFilter;
 import org.api.rest_api_grupo2.service.impl.UserDetailsServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -48,6 +49,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.OPTIONS, "/api/**").permitAll()
                         .requestMatchers("/api/users/**").permitAll()
                         .requestMatchers("/ping").permitAll()
                         .requestMatchers("/api/nfts/**").permitAll()
