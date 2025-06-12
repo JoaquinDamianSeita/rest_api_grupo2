@@ -18,4 +18,5 @@ public class NFTResponse {
     private Integer physicalPieces;
     private Boolean available;
     private List<String> imageUrls;
+    private Long userId;
 }
